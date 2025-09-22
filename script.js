@@ -1,0 +1,398 @@
+// Mobile Navigation Toggle
+const hamburger = document.querySelector('.hamburger');
+const navMenu = document.querySelector('.nav-menu');
+
+hamburger.addEventListener('click', () => {
+    hamburger.classList.toggle('active');
+    navMenu.classList.toggle('active');
+});
+
+// Close mobile menu when clicking on a link
+document.querySelectorAll('.nav-menu a').forEach(link => {
+    link.addEventListener('click', () => {
+        hamburger.classList.remove('active');
+        navMenu.classList.remove('active');
+    });
+});
+
+// FAQ Accordion
+const faqItems = document.querySelectorAll('.faq-item');
+
+faqItems.forEach(item => {
+    const question = item.querySelector('.faq-question');
+    
+    question.addEventListener('click', () => {
+        const isActive = item.classList.contains('active');
+        
+        // Close all FAQ items
+        faqItems.forEach(faqItem => {
+            faqItem.classList.remove('active');
+        });
+        
+        // Open clicked item if it wasn't active
+        if (!isActive) {
+            item.classList.add('active');
+        }
+    });
+});
+
+// Smooth scrolling for navigation links
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+            target.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+        }
+    });
+});
+
+// Header background change on scroll
+const header = document.querySelector('.header');
+
+window.addEventListener('scroll', () => {
+    if (window.scrollY > 100) {
+        header.style.background = 'rgba(255, 255, 255, 0.98)';
+        header.style.boxShadow = '0 2px 20px rgba(0, 0, 0, 0.1)';
+    } else {
+        header.style.background = 'rgba(255, 255, 255, 0.95)';
+        header.style.boxShadow = 'none';
+    }
+});
+
+// Intersection Observer for animations
+const observerOptions = {
+    threshold: 0.1,
+    rootMargin: '0px 0px -50px 0px'
+};
+
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.classList.add('fade-in-up');
+        }
+    });
+}, observerOptions);
+
+// Observe elements for animation
+const animateElements = document.querySelectorAll('.stat-item, .feature-card, .testimonial-card, .subscription-card, .step');
+animateElements.forEach(el => {
+    observer.observe(el);
+});
+
+// Counter animation for stats
+const animateCounters = () => {
+    const counters = document.querySelectorAll('.stat-item h3');
+    
+    counters.forEach(counter => {
+        const target = parseInt(counter.textContent.replace(/\D/g, ''));
+        const increment = target / 100;
+        let current = 0;
+        
+        const updateCounter = () => {
+            if (current < target) {
+                current += increment;
+                counter.textContent = Math.ceil(current) + (counter.textContent.includes('%') ? '%' : '');
+                requestAnimationFrame(updateCounter);
+            } else {
+                counter.textContent = counter.textContent;
+            }
+        };
+        
+        updateCounter();
+    });
+};
+
+// Trigger counter animation when stats section is visible
+const statsSection = document.querySelector('.stats');
+const statsObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            animateCounters();
+            statsObserver.unobserve(entry.target);
+        }
+    });
+}, { threshold: 0.5 });
+
+if (statsSection) {
+    statsObserver.observe(statsSection);
+}
+
+// Parallax effect for hero section
+window.addEventListener('scroll', () => {
+    const scrolled = window.pageYOffset;
+    const heroIllustration = document.querySelector('.hero-illustration');
+    
+    if (heroIllustration) {
+        heroIllustration.style.transform = `translateY(${scrolled * 0.5}px)`;
+    }
+});
+
+// Button hover effects
+const buttons = document.querySelectorAll('.btn');
+buttons.forEach(button => {
+    button.addEventListener('mouseenter', function() {
+        this.style.transform = 'translateY(-3px) scale(1.05)';
+    });
+    
+    button.addEventListener('mouseleave', function() {
+        this.style.transform = 'translateY(0) scale(1)';
+    });
+});
+
+// Download button click tracking
+const downloadButtons = document.querySelectorAll('.download-btn');
+downloadButtons.forEach(button => {
+    button.addEventListener('click', function(e) {
+        e.preventDefault();
+        const platform = this.classList.contains('google-play') ? 'Google Play' : 'App Store';
+        
+        // Show a modal or redirect to actual download
+        showDownloadModal(platform);
+    });
+});
+
+// Download modal function
+const showDownloadModal = (platform) => {
+    // Create modal
+    const modal = document.createElement('div');
+    modal.className = 'download-modal';
+    modal.innerHTML = `
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Download Blossom</h3>
+                <span class="close-modal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p>Thank you for your interest in Blossom! The app will be available on ${platform} soon.</p>
+                <p>Stay tuned for updates!</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary close-modal-btn">Got it!</button>
+            </div>
+        </div>
+    `;
+    
+    // Add modal styles
+    const modalStyles = `
+        .download-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+            animation: slideInUp 0.3s ease;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .modal-header h3 {
+            color: #333;
+            margin: 0;
+        }
+        
+        .close-modal {
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #666;
+        }
+        
+        .modal-body p {
+            color: #666;
+            margin-bottom: 1rem;
+        }
+        
+        .modal-footer {
+            margin-top: 1.5rem;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    `;
+    
+    // Add styles to head
+    const styleSheet = document.createElement('style');
+    styleSheet.textContent = modalStyles;
+    document.head.appendChild(styleSheet);
+    
+    // Add modal to body
+    document.body.appendChild(modal);
+    
+    // Close modal functionality
+    const closeModal = () => {
+        modal.remove();
+        styleSheet.remove();
+    };
+    
+    modal.querySelector('.close-modal').addEventListener('click', closeModal);
+    modal.querySelector('.close-modal-btn').addEventListener('click', closeModal);
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            closeModal();
+        }
+    });
+};
+
+// Form validation for newsletter signup (if added later)
+const validateEmail = (email) => {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(email);
+};
+
+// Lazy loading for images (if images are added later)
+const lazyImages = document.querySelectorAll('img[data-src]');
+const imageObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            const img = entry.target;
+            img.src = img.dataset.src;
+            img.classList.remove('lazy');
+            imageObserver.unobserve(img);
+        }
+    });
+});
+
+lazyImages.forEach(img => {
+    imageObserver.observe(img);
+});
+
+// Performance optimization: Debounce scroll events
+const debounce = (func, wait) => {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+};
+
+// Apply debounce to scroll events
+const debouncedScrollHandler = debounce(() => {
+    // Scroll-based animations and effects
+    const scrolled = window.pageYOffset;
+    const heroIllustration = document.querySelector('.hero-illustration');
+    
+    if (heroIllustration) {
+        heroIllustration.style.transform = `translateY(${scrolled * 0.3}px)`;
+    }
+}, 10);
+
+window.addEventListener('scroll', debouncedScrollHandler);
+
+// Add loading animation
+window.addEventListener('load', () => {
+    document.body.classList.add('loaded');
+    
+    // Add loaded class styles
+    const loadedStyles = `
+        body.loaded .hero-title,
+        body.loaded .hero-description,
+        body.loaded .hero-buttons {
+            animation-play-state: running;
+        }
+    `;
+    
+    const styleSheet = document.createElement('style');
+    styleSheet.textContent = loadedStyles;
+    document.head.appendChild(styleSheet);
+});
+
+// Easter egg: Konami code
+let konamiCode = [];
+const konamiSequence = [
+    'ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown',
+    'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight',
+    'KeyB', 'KeyA'
+];
+
+document.addEventListener('keydown', (e) => {
+    konamiCode.push(e.code);
+    
+    if (konamiCode.length > konamiSequence.length) {
+        konamiCode.shift();
+    }
+    
+    if (konamiCode.join(',') === konamiSequence.join(',')) {
+        // Easter egg activated!
+        document.body.style.animation = 'rainbow 2s infinite';
+        
+        const rainbowStyles = `
+            @keyframes rainbow {
+                0% { filter: hue-rotate(0deg); }
+                100% { filter: hue-rotate(360deg); }
+            }
+        `;
+        
+        const styleSheet = document.createElement('style');
+        styleSheet.textContent = rainbowStyles;
+        document.head.appendChild(styleSheet);
+        
+        setTimeout(() => {
+            document.body.style.animation = '';
+            styleSheet.remove();
+        }, 5000);
+        
+        konamiCode = [];
+    }
+});
+
+// Console welcome message
+console.log(`
+🌟 Welcome to Blossom! 🌟
+A Safe Place For Your Kids
+
+Built with ❤️ for young learners
+Try the Konami code for a surprise! ↑↑↓↓←→←→BA
+`);
+
+// Service Worker registration (for PWA capabilities)
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js')
+            .then(registration => {
+                console.log('SW registered: ', registration);
+            })
+            .catch(registrationError => {
+                console.log('SW registration failed: ', registrationError);
+            });
+    });
+}
