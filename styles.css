@@ -633,21 +633,21 @@ h1, h2, h3, h4, h5, h6, p { overflow-wrap: anywhere; word-break: normal; hyphens
 
 /* share */
 .how-it-works-image .icon-share {
-    top: 60%;
-    right: -80px;
+    top: 55%;
+    right: -30px;
     transform: translateY(-50%);
 }
 
 /* love */
 .how-it-works-image .icon-love {
     top: 150px;
-    right: -50px;
+    right: -20px;
 }
 
 /* rocket */
 .how-it-works-image .icon-rocket {
-    top: 50%;
-    left: -80px;
+    top:30%;
+    left: -40px;
     transform: translateY(-50%);
     z-index: 2;
 }
