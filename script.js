@@ -2,16 +2,23 @@
 const hamburger = document.querySelector('.hamburger');
 const navMenu = document.querySelector('.nav-menu');
 
-hamburger.addEventListener('click', () => {
-    hamburger.classList.toggle('active');
-    navMenu.classList.toggle('active');
-});
+if (hamburger && navMenu) {
+    hamburger.addEventListener('click', () => {
+        const expanded = hamburger.getAttribute('aria-expanded') === 'true';
+        hamburger.setAttribute('aria-expanded', String(!expanded));
+        hamburger.classList.toggle('active');
+        navMenu.classList.toggle('active');
+    });
+}
 
 // Close mobile menu when clicking on a link
 document.querySelectorAll('.nav-menu a').forEach(link => {
     link.addEventListener('click', () => {
-        hamburger.classList.remove('active');
-        navMenu.classList.remove('active');
+        if (hamburger && navMenu) {
+            hamburger.classList.remove('active');
+            navMenu.classList.remove('active');
+            hamburger.setAttribute('aria-expanded', 'false');
+        }
     });
 });
 
@@ -63,45 +70,50 @@ window.addEventListener('scroll', () => {
     }
 });
 
-// Intersection Observer for animations
+// Intersection Observer for animations with variants and stagger
 const observerOptions = {
-    threshold: 0.1,
+    threshold: 0.12,
     rootMargin: '0px 0px -50px 0px'
 };
 
-const observer = new IntersectionObserver((entries) => {
+const revealObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
         if (entry.isIntersecting) {
-            entry.target.classList.add('fade-in-up');
+            const el = entry.target;
+            el.classList.add('fade-in-up');
+            el.classList.add('is-visible'); // for .reveal variants
+            revealObserver.unobserve(el);
         }
     });
 }, observerOptions);
 
 // Observe elements for animation
-const animateElements = document.querySelectorAll('.stat-item, .feature-card, .testimonial-card, .subscription-card, .step');
-animateElements.forEach(el => {
-    observer.observe(el);
+const animateElements = document.querySelectorAll(
+    '.stat-item, .feature-card, .testimonial-card, .subscription-card, .step, .explore-text, .explore-image, .how-it-works-content, .testimonials-header, .try-free-content, .footer-section'
+);
+animateElements.forEach((el, index) => {
+    // optional stagger via CSS variable
+    el.style.setProperty('--reveal-delay', `${Math.min(index * 40, 240)}ms`);
+    el.classList.add('reveal');
+    revealObserver.observe(el);
 });
 
-// Counter animation for stats
+// Counter animation for stats (kept for future; disabled due to current markup)
 const animateCounters = () => {
     const counters = document.querySelectorAll('.stat-item h3');
-    
+    if (!counters.length) return;
     counters.forEach(counter => {
         const target = parseInt(counter.textContent.replace(/\D/g, ''));
-        const increment = target / 100;
+        if (Number.isNaN(target)) return;
+        const increment = Math.max(1, Math.floor(target / 100));
         let current = 0;
-        
         const updateCounter = () => {
             if (current < target) {
                 current += increment;
-                counter.textContent = Math.ceil(current) + (counter.textContent.includes('%') ? '%' : '');
+                counter.textContent = String(Math.min(target, Math.ceil(current)));
                 requestAnimationFrame(updateCounter);
-            } else {
-                counter.textContent = counter.textContent;
             }
         };
-        
         updateCounter();
     });
 };
@@ -373,6 +385,43 @@ document.addEventListener('keydown', (e) => {
         
         konamiCode = [];
     }
+});
+
+// Testimonials carousel functionality
+(function initTestimonialsCarousel(){
+    const cards = Array.from(document.querySelectorAll('.testimonial-card'));
+    const dots = Array.from(document.querySelectorAll('.dot-indicator .dot'));
+    const prev = document.querySelector('.dot-indicator .prev');
+    const next = document.querySelector('.dot-indicator .next');
+    if (!cards.length || !prev || !next || !dots.length) return;
+
+    let current = 0;
+
+    const setActive = (index) => {
+        current = (index + cards.length) % cards.length;
+        cards.forEach((c, i) => {
+            c.classList.toggle('active', i === current);
+        });
+        dots.forEach((d, i) => {
+            d.classList.toggle('active', i === current);
+        });
+    };
+
+    // initialize
+    setActive(0);
+
+    prev.addEventListener('click', () => setActive(current - 1));
+    next.addEventListener('click', () => setActive(current + 1));
+    dots.forEach((d, i) => d.addEventListener('click', () => setActive(i)));
+})();
+
+// Wire hero buttons to on-page anchors
+document.querySelectorAll('.hero-buttons .btn').forEach((btn, i) => {
+    btn.addEventListener('click', () => {
+        const targets = ['.how-it-works', '.explore-subjects'];
+        const el = document.querySelector(targets[i]) || document.querySelector('#subjects');
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
 });
 
 // Console welcome message
