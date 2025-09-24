@@ -16,6 +16,10 @@ body {
     background-color: #FBFBFD;
 }
 
+/* Universal responsive images and text wrapping */
+img { max-width: 100%; height: auto; display: block; }
+h1, h2, h3, h4, h5, h6, p { overflow-wrap: anywhere; word-break: normal; hyphens: auto; }
+
 /* Global animation defaults and reduced-motion support */
 @media (prefers-reduced-motion: reduce) {
     * {
@@ -329,6 +333,7 @@ body {
     text-decoration: none;
     display: inline-block;
     text-align: center;
+    min-height: 44px;
 }
 
 .btn-primary {
@@ -1568,7 +1573,8 @@ body {
 
     .nav-menu a {
         display: block;
-        padding: 8px 12px;
+        padding: 12px 14px;
+        font-size: 16px;
     }
 
     .nav-menu.active {
@@ -1605,7 +1611,7 @@ body {
         display: flex;
         align-items: flex-end;
         justify-content: center;
-        gap: 16px;
+        gap: clamp(8px, 3vw, 16px);
         padding-top: 12px;
     }
 
@@ -1616,11 +1622,11 @@ body {
     }
 
     .child-img {
-        width: min(42%, 220px);
+        width: min(44%, 240px);
     }
 
     .parent-img {
-        width: min(46%, 260px);
+        width: min(48%, 280px);
     }
 
     .icon-love {
@@ -1640,7 +1646,7 @@ body {
 
     .stats-container {
         flex-direction: column;
-        gap: 16px;
+        gap: 12px;
     }
 
     .stat-item:not(:last-child)::after {
@@ -1702,7 +1708,7 @@ body {
     }
 
     .footer {
-        padding: 2.5rem 20px 1rem;
+        padding: 2rem 16px 1rem;
     }
 
     .footer-content {
@@ -1721,15 +1727,15 @@ body {
 
 @media (max-width: 768px) {
     .hero-title {
-        font-size: 40px;
+        font-size: 36px;
     }
 
     .hero-description {
-        font-size: 18px;
+        font-size: 17px;
     }
 
     .btn {
-        padding: 0.8rem 1.2rem;
+        padding: 0.9rem 1.1rem;
     }
 
     .features {
@@ -1760,15 +1766,15 @@ body {
 
     /* Keep hero characters side-by-side on small screens */
     .hero-image {
-        gap: 12px;
+        gap: 10px;
     }
 
     .child-img {
-        width: 44%;
+        width: 46%;
     }
 
     .parent-img {
-        width: 48%;
+        width: 50%;
     }
 
     .try-free-bottom-svgs {
@@ -1782,7 +1788,7 @@ body {
     }
 
     .nav-container {
-        padding: 0.6rem 0;
+        padding: 0.5rem 0;
     }
 
     .hero {
@@ -1799,7 +1805,7 @@ body {
     .icon-rocket { top: 72px; left: 6px; }
 
     .hero-title {
-        font-size: 34px;
+        font-size: 32px;
         line-height: 1.15;
         margin-bottom: 20px;
     }
@@ -1809,7 +1815,7 @@ body {
     }
 
     .hero-buttons {
-        gap: 10px;
+        gap: 8px;
     }
 
     .explore-text button {
@@ -1817,6 +1823,6 @@ body {
     }
 
     .footer-links {
-        gap: 1rem;
+        gap: 12px;
     }
 }
